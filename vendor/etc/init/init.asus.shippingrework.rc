@@ -1,0 +1,29 @@
+service shipping_rework  /vendor/bin/sh /vendor/bin/shipping_rework.sh
+    user root
+    group root
+    seclabel u:r:shipping_rework:s0
+    oneshot
+    disabled
+
+on property:vendor.shipping.rework=*
+    start shipping_rework
+
+on property:vendor.shipping.rework.cid=*
+    start shipping_rework    
+
+service AsusUpdateAttestationKey /system/bin/AsusUpdateAttestationKey.sh
+    user root
+    group root
+    disabled
+    seclabel u:r:asus_update_key:s0
+    oneshot
+
+on property:vendor.update.attestation.key=*
+	start AsusUpdateAttestationKey
+
+on property:vendor.sys.asus.setenforce=1
+	setprop vendor.asus.setenforce 1
+
+on property:vendor.sys.asus.setenforce=0
+	setprop vendor.asus.setenforce 0
+

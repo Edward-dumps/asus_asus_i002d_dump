@@ -1,0 +1,49 @@
+# ASUS_BSP+++ Show_Cai
+service AThermalService /vendor/bin/init.asus.thermal_conf.sh
+        class core
+	seclabel u:r:thermal-engine:s0
+        user root
+        oneshot
+        disabled
+        
+service onFgAppChanged /system/vendor/bin/onFgAppChanged
+        class core
+        user root
+        oneshot
+        disabled
+        seclabel u:r:onFgAppChanged:s0
+# ASUS_BSP--- Show_Cai
+
+# ASUS_BSP+++ Clay_Wang
+on post-fs-data
+	setprop vendor.thermal.create.thermal_link 1
+#setprop persist.asus.thermalfan 1
+	start AThermalService
+# ASUS_BSP--- Clay_Wang
+
+# ASUS_BSP+++ Clay_Wang
+on property:sys.boot_completed=1
+	setprop vendor.thermal.create.thermal_link 1
+	start AThermalService
+
+on property:debug.thermal_engine.reset=1
+	start AThermalService
+# ASUS_BSP--- Clay_Wang
+
+on property:debug.lmh=*
+   start AThermalService
+on property:vendor.thermal.lmh_freq1=*
+   setprop debug.thermal.lmh_freq1 ${vendor.thermal.lmh_freq1}
+on property:vendor.thermal.lmh_freq0=*
+   setprop debug.thermal.lmh_freq0 ${vendor.thermal.lmh_freq0}
+
+on property:vendor.thermal.dumpsys=1
+        start SENSOR_DUMP
+on property:sys.thermal.dumpsys_sns=1
+        start AThermalService
+on property:persist.vendor.asus.startlog=*
+        setprop vendor.thermal.startlog ${persist.vendor.asus.startlog}
+on property:vendor.thermal.dumpsys_done=1
+        setprop vendor.thermal.dumpsys 0
+# ASUS_BSP--- Clay_Wang "dumpsys sensorservice"
+
